@@ -24,7 +24,7 @@ async function retrieveFromAPI(wquery, gquery, res) {
 	axios
 		.all([
 			axios.get(
-				wquery + `/examples?includeDuplicates=false&useCanonical=false&limit=10&api_key=${wordnikapikey}`
+				wquery + `/examples?includeDuplicates=false&useCanonical=false&api_key=${wordnikapikey}`
 			),
 			axios.get(wquery + `/relatedWords?useCanonical=false&limitPerRelationshipType=10&api_key=${wordnikapikey}`),
 			axios.get(gquery)
@@ -213,32 +213,9 @@ app.get('/removeWord/:id', (res, req) => {
 			res.res.status(400).send(error);
 		});
 });
-/*
-app.get('/:id', (res, req) => {
-	res.send(req.params);
-});
-*/
-/*
-app.get('/updateWord/:id', (req, res) => {
-	console.log(req.params.id);
-	console.log(req.body);
 
-	
-	Word.updateOne().then(response => {
-		res.status(200).json(response);
-	})
-	.catch(error => {
-		res.status(400).json(error);
-	});
-  
-});
-*/
-
-//app.use(bodyParser.urlencoded({ extended: true }));
-
+//update word function. Search according to document id and update each related fields with object fetched
 app.post('/updateWord/:id', (req, res) => {
-	//console.log('post ', req.params.id);
-	//console.log('post ', req.body);
 
 	Word.updateOne(
 		{ _id: req.params.id },

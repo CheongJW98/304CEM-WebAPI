@@ -126,7 +126,9 @@
                         <h3 class="modal-title" id="remove-modal-title"></h3><!--set title in function-->
                     </div>
                     <div class="modal-body">
-                        <span>P.s. Deletion is permanent, action could not be undo.</span>
+                        <div id ="remove-note-container">
+                            <span>P.s. Deletion is permanent, action could not be undo.</span>
+                        </div>
                         <div class="modal-footer" style="margin-bottom: -20px;">
                             <div class="row">
                                 <div class="col-xs-8"></div>
@@ -194,6 +196,7 @@
             
     <script>
 
+    //function to check if word exists and add word if other validations such as word could not be found from api are passed
     function addWord(){
         document.getElementById('loadingAddScene').style.display = "block";
         document.getElementById('addWordSubmitBtnContainer').style.display = "none";
@@ -219,6 +222,7 @@
             .then(jsonResp => {
                 checkResult = jsonResp;
 
+                //if none result of such word are found from database, continue to add word
                 if(checkResult.length !== 0){
                     
                     msg.innerHTML = "Word existed. Please enter new words."
@@ -298,7 +302,7 @@
         
     }
 
-
+    //display all words added
     function displayAllWords(){
         url = 'https://dict-api-304cem.herokuapp.com/fetchAllWord'
 
@@ -333,16 +337,7 @@
     var delSelection;
     var wordClicked;
 
-/*
-    document.getElementById(`${word["_id"]}`).addEventListener('click',(e) => {
-        delSelection = e.target.id;
-        wordClick = e.target.getAttribute("data-name")
-        console.log(wordClick)
-        removeWordModal()
-
-    }, {once: true})
-*/
-
+    //when trash icon clicked, show remove modal
     function removeWordModal(e){
 
         delSelection = e.target.id;
@@ -355,6 +350,7 @@
 
     }
 
+    //function to delete word's document from database with document id
     function deleteWord(){
         url = 'https://dict-api-304cem.herokuapp.com/removeWord/' + delSelection;
 				
@@ -374,6 +370,7 @@
         });
     }
 
+    //function to show related fields and information for each word in a modal
     function editDetailModal(id){
         url = 'https://dict-api-304cem.herokuapp.com/fetchWord/' + id
 
@@ -543,6 +540,7 @@
         });
     }
 
+    //if submit button in editword modal is clicked, get all input from each input area and store into array in an updateElements object
     function editWord(id){
         console.log('editing')
 
@@ -559,16 +557,7 @@
             updateExample: []
         }
 
-        //get number of tr, in order to loop through every text area in table and get input
-        //no use tiok
-        //var rows = document.getElementById('edit-word-details-table').getElementsByTagName("tr").length;
-
-/*
-        jQuery('#edit-word-details-table tr').each(function (cmp){
-            console.log(jQuery(this))
-            console.log(cmp)
-        })
-*/
+        
         //get table elements
         var table = document.getElementById('edit-word-details-table')
 
@@ -614,16 +603,6 @@
                 }
             }
         }
-/*
-        for (let i = 0; i<rows; i++){
-            var element = document.getElementById('edit-word-details-table').getElementsByTagName("tr")
-            var txtClassName = element[0].value;
-
-            console.log(txtClassName)
-
-            //console.log(i)
-        }
-*/
 
 
         console.log(updateElements)
@@ -653,6 +632,7 @@
 
     }
 
+    //function to show all words added at start of application
     (function () {
         displayAllWords();
     })();

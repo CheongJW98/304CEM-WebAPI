@@ -33,12 +33,13 @@ p {
 .header-input-container {
 	display: flex;
 	margin-top: 14px;
+	width: 360px;
 }
 
 #search-button {
-	margin-top: 26px;
-	margin-left: 12px;
-	position: absolute;
+	margin-top: 18px;
+	margin-left: -36px;
+	position: relative;
 	cursor: pointer;
 	border: none;
 	background: none;
@@ -53,11 +54,11 @@ p {
 	position: relative;
 	height: 38px;
 	width: 100%;
-	border-radius: 6px 0 0 6px;
+	border-radius: 0 6px 6px 0;
 	margin-top: 15px;
 	font-size: 16px;
 	border: 2px solid #ffd60a;
-	padding: 10px 37px;
+	padding: 10px 37px 10px 12px;
 }
 
 #userInput:focus,
@@ -207,6 +208,17 @@ p {
 	padding: 30px 10% 30px 10%;
 }
 
+#removeWord .modal-footer .remove-yes {
+	padding: 0px !important;
+}
+
+#removeWord .modal-footer .remove-no {
+	padding-right: 25px !important;
+}
+
+#remove-note-container {
+	padding-top: 15px;
+}
 
 
 /*admin*/
@@ -410,10 +422,10 @@ p {
 	height: 38px;
 	font-size: 16px;
 	text-align-last: center;
-	border-left: 0 !important;
+	border-right: 0 !important;
 	border-top: 2px solid #ffd60a !important;
 	border-bottom: 2px solid #ffd60a;
-	border-radius: 0 6px 6px 0;
+	border-radius: 6px 0 0 6px;
 }
 
 /*style the arrow inside the select element:*/

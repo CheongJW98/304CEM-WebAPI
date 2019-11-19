@@ -23,6 +23,17 @@
                     <div id="header-wrapper">
                         <div id="header-container">
                             <img src="image/dict.png" id="dict-header-icon"/>
+
+                            <div class="custom-select">
+                                <select name="filter" id="filter-select">
+                                    <option value="All">All</option>
+                                    <option value="All">All</option>
+                                    <option value="Definitions">Definitions</option>
+                                    <option value="Synonyms">Synonyms</option>
+                                    <option value="Examples">Examples</option>
+                                </select>
+                            
+                            </div>
                             
                             <div class="header-input-container">
 
@@ -37,16 +48,7 @@
                             
                             </div>
 
-                            <div class="custom-select">
-                                <select name="filter" id="filter-select">
-                                    <option value="All">All</option>
-                                    <option value="All">All</option>
-                                    <option value="Definitions">Definitions</option>
-                                    <option value="Synonyms">Synonyms</option>
-                                    <option value="Examples">Examples</option>
-                                </select>
                             
-                            </div>
 
                             <!--
                             <select name="filter" id="filter-select">
@@ -124,6 +126,7 @@
 
         <script>
 
+            //function to show only information filtered by user
             function checkSelectedOptions(){
                 var filterOption = document.getElementsByClassName('select-selected')[0].innerHTML
                 console.log(filterOption)
@@ -248,7 +251,7 @@
 
             // end of javascript code for drop down list
 
-            //search word function
+            //search word function, get all word that matches the input string, no matter where it locates in word
             function searchWord(){
 
 				let input = $('#userInput').val();
@@ -277,6 +280,10 @@
                         //Clear display area
                         content.innerHTML = ''; 
                         let info = '';
+
+                        //if no results found, display message
+                        //else if there is only one result, show related fields and information for the word
+                        //else, if there are more than one result, show all related words to user
 
                         if(result.length ===0){
                             info+= 'No result found. '
@@ -322,11 +329,7 @@
                                     }//${temp}
                                     ++temp;
                                 }
-                                /*
-                                                if(temp === defiArr.length){
-                                                    content.innerHTML = info;
-                                                }                    
-                                */
+                                
                             
                             }
 
@@ -449,6 +452,7 @@
 				}
             }
 
+            //function to fetch single word details from database
             function showWordDetails(id){
 
                 url = 'https://dict-api-304cem.herokuapp.com/fetchWord/' + id
@@ -505,11 +509,7 @@
                             }//${temp}
                             ++temp;
                         }
-                        /*
-                                        if(temp === defiArr.length){
-                                            content.innerHTML = info;
-                                        }                    
-                        */
+                        
                     
                     }
 
