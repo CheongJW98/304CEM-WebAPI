@@ -260,7 +260,7 @@
                     
                     document.getElementById('word-searched').innerHTML = input;
 
-                    url = `http://localhost:3000/searchWord/` + input;
+                    url = `https://dict-api-304cem.herokuapp.com/searchWord/` + input;
 
                     fetch(url)
                     .then(resp => {
@@ -451,7 +451,7 @@
 
             function showWordDetails(id){
 
-                url = 'http://localhost:3000/fetchWord/' + id
+                url = 'https://dict-api-304cem.herokuapp.com/fetchWord/' + id
 
                 fetch(url)
                 .then(resp => {
