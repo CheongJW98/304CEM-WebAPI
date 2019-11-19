@@ -1,0 +1,663 @@
+<html>
+    <head>
+        <link rel="icon" href="image/dict.png" type="image/png" sizes="16x16">
+        <title>Dictionary</title>
+        <link rel="stylesheet" type="text/css" href="external.css">
+        <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+
+        <!--bootstrap-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    </head>
+        
+    <body>
+    <div id="wrapper">
+        <div id="header">
+        
+            <div id="header-cover" class="row">
+            <!--
+                <img src="image/bks.jpg" id="dict-header-cover" />
+            -->
+                
+
+                <div id="header-wrapper">
+                    <div id="header-container">
+                        <img src="image/dict.png" id="dict-header-icon"/>
+                        
+                        <div class="header-input-container" id = "admin-input-header">
+
+                            <input type="text" id="adminInput" onkeyup = "searchWord()"
+                                placeholder="Type to Search for Words" 
+                                title="Type in a word">
+                        
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div id="admin-add-wrapper">
+            <div id="admin-add-container" class="row">
+                <!--<button class="btn add-btn" id="adminAdd">-->
+                <div id ="add-button-align">
+                    <a class="a-admin-add" id = "adminAddBtn" data-toggle="modal" data-target="#addWord">
+                        <span>Add Word</span>
+                    </a>
+                </div>
+                <!--</button>-->
+            </div>
+        </div>
+        <div id="admin-result-container">
+            
+            <div id="admin-search-result-container" class="row">
+                <table class="table table-striped" id="admin-list">
+                    <thead>
+                    <tr>
+                        <th class = "col-sm-10">Word</th>
+                        <th class = "col-sm-1">Edit</th>
+                        <th class = "col-sm-1">Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody id= "wordList">
+                    </tbody>
+                </table>
+                
+
+            </div>
+        </div>
+
+        <div class="modal fade" id="addWord" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal Content-->
+                <div class="modal-content">
+                    <!--Modal Header-->
+                    <div class="modal-header">
+                        <button type="button" id="addModalClose" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Add Word</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="wordtoaddinput" placeholder:"Please enter word to be added">
+                            <div id="addMessageContainer">
+                                <span id="addMessage"></span>
+                            </div>
+                        </div>    
+                        <div class="modal-footer" style="margin-bottom: -20px;">
+                            <div class="row" id="addWordSubmitBtnContainer">
+                                <div class="col-xs-10">
+                                </div>
+                                <div class="col-xs-2">
+                                    <div class="form-group">
+                                        <div class="add-btn-wrapper">
+                                            <button type="button"  name="submitted" onclick="addWord()" class="btn btn-primary">SUBMIT</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="row" id="loadingAddScene">
+                                <span class="col-xs-10">Adding in process. Please Wait...</span>
+                                <div class="col-xs-2 addLoadingContainer">
+                                    <div class="sk-folding-cube">
+                                        <div class="sk-cube1 sk-cube"></div>
+                                        <div class="sk-cube2 sk-cube"></div>
+                                        <div class="sk-cube4 sk-cube"></div>
+                                        <div class="sk-cube3 sk-cube"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>            
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="removeWord" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal Content-->
+                <div class="modal-content">
+                    <!--Modal Header-->
+                    <div class="modal-header">
+                        <button type="button" id="removeModalClose" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title" id="remove-modal-title"></h3><!--set title in function-->
+                    </div>
+                    <div class="modal-body">
+                        <span>P.s. Deletion is permanent, action could not be undo.</span>
+                        <div class="modal-footer" style="margin-bottom: -20px;">
+                            <div class="row">
+                                <div class="col-xs-8"></div>
+                                <div class="col-xs-2">
+                                    <div class="form-group">
+                                        <div class="add-btn-wrapper">
+                                            <button type="button" name="submitted" onclick="deleteWord()" class="btn btn-primary">Yes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-2">
+                                    <div class="form-group">
+                                        <div class="add-btn-wrapper">
+                                            <button type="button"  data-dismiss="modal" class="btn btn-primary">No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>            
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editWord" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal Content-->
+                <div class="modal-content">
+                    <!--Modal Header-->
+                    <div class="modal-header">
+                        <button type="button" id="editModalClose" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title" id="edit-modal-title"></h3><!--set title in function-->
+                    </div>
+                    <div class="modal-body">
+                        <div class= "content wrapper">
+                            <div class="form-group" >
+                                <table class="edit-word-details-table" id="edit-word-details-table">
+                                    
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="margin-bottom: -20px;">
+                            <div class="row">
+                                <div class="col-xs-10"></div>
+                                <div class="col-xs-2">
+                                    <div class="form-group">
+                                        <div class="edit-btn-wrapper" id="editBtnDiv">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>            
+                    
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+            
+    <script>
+
+    function addWord(){
+        document.getElementById('loadingAddScene').style.display = "block";
+        document.getElementById('addWordSubmitBtnContainer').style.display = "none";
+
+        var input = document.getElementById("wordtoaddinput").value.toLowerCase();
+        var msg = document.getElementById('addMessage');
+        var msgContainer = document.getElementById('addMessageContainer');
+
+        if (input.length == 0){
+            
+            msg.innerHTML = "Please enter a word"
+            msgContainer.style.display="block"
+        }
+        else{
+            msgContainer.style.display="none"
+
+            check = 'http://localhost:3000/searchWord/' + input;
+                    
+            fetch(check)
+            .then(resp => {
+                return resp.json();
+            })
+            .then(jsonResp => {
+                checkResult = jsonResp;
+
+                if(checkResult.length !== 0){
+                    
+                    msg.innerHTML = "Word existed. Please enter new words."
+                    msgContainer.style.display="block"
+                    document.getElementById('loadingAddScene').style.display = "none";
+                    document.getElementById('addWordSubmitBtnContainer').style.display = "block";
+                    
+                }
+                else{
+                    url = 'http://localhost:3000/addWord/' + input;
+                    
+                    fetch(url)
+                    .then(resp => {
+                        return resp;
+                    })
+                    .then(jsonResp => {
+                        result = jsonResp;
+                        //console.log(result['status'])
+                        if(result['status'] === 200){
+                            jQuery('#addModalClose').click();
+                            document.getElementById('loadingAddScene').style.display = "none";
+                            document.getElementById('addWordSubmitBtnContainer').style.display = "block";
+
+                            displayAllWords();
+                        }
+                        else{
+                            msg.innerHTML = "Error occured. Please try again."
+                            msgContainer.style.display="block"
+                            //alert("Please try again.");
+                        }		
+                        document.getElementById('wordtoaddinput').value = ""; //Clear input field
+                    });
+                    input.value=""
+                }
+            });
+
+        }
+    }
+
+    //different from client, admin can search dynamically
+    function searchWord(){
+        let input = document.getElementById("adminInput").value.toLowerCase();
+
+        if (input.length !==0){
+            url = `http://localhost:3000/searchWord/` + input;
+
+            fetch(url)
+            .then(resp => {
+                return resp.json();
+            })
+            .then(jsonResp => {
+                result = jsonResp;
+            
+                let content = document.getElementById('wordList');
+                //Clear display area
+                content.innerHTML = ''; 
+                let info = '';
+
+                for (let i = 1; i <= result.length; i += 1) {
+                    const word = result[i-1];
+
+                    info+= `<tr>`
+                    info+= `<td>`+ word['word'] +`</td>`;
+                    info+= `<td><button class="btn edit-btn"  onClick="editDetailModal('${word['_id']}')" data-toggle="modal" data-target="#editWord" style="padding: 7px;"><i class="fas fa-edit"></i></button></td>`
+                    info+= `<td><button class="btn remove-btn" id="${word["_id"]}" data-name="${word["word"]}" onClick="removeWordModal(event)" data-toggle="modal" data-target="#removeWord" style="padding: 7px 9px;"><i class="fa fa-trash"></i></button></td>`
+                    info+= `</tr>`;
+
+                }
+
+                content.innerHTML = info;
+            })
+
+        }
+        else{
+            displayAllWords();
+        }
+        
+    }
+
+
+    function displayAllWords(){
+        url = 'http://localhost:3000/fetchAllWord'
+
+        fetch(url)
+        .then(resp => {
+            return resp.json();
+        })
+        .then(jsondata => {
+            result = jsondata;
+            
+            let content = document.getElementById('wordList');
+            //Clear display area
+            content.innerHTML = ''; 
+            let info = '';
+
+            for (let i = 1; i <= result.length; i += 1) {
+                const word = result[i-1];
+
+                info+= `<tr>`
+                info+= `<td>`+ word['word'] +`</td>`;
+                info+= `<td><button class="btn edit-btn"  onClick="editDetailModal('${word['_id']}')" data-toggle="modal" data-target="#editWord" style="padding: 7px;"><i class="fas fa-edit"></i></button></td>`
+                info+= `<td><button class="btn remove-btn" id="${word["_id"]}" data-name="${word["word"]}" onClick="removeWordModal(event)" data-toggle="modal" data-target="#removeWord" style="padding: 7px 9px;"><i class="fa fa-trash"></i></button></td>`
+                info+= `</tr>`;
+
+            }
+
+            content.innerHTML = info;
+
+
+        });
+    }
+    var delSelection;
+    var wordClicked;
+
+/*
+    document.getElementById(`${word["_id"]}`).addEventListener('click',(e) => {
+        delSelection = e.target.id;
+        wordClick = e.target.getAttribute("data-name")
+        console.log(wordClick)
+        removeWordModal()
+
+    }, {once: true})
+*/
+
+    function removeWordModal(e){
+
+        delSelection = e.target.id;
+        wordClick = e.target.getAttribute("data-name")
+        console.log(wordClick)
+        console.log('id', delSelection)
+
+        var title = document.getElementById("remove-modal-title");
+        title.innerHTML = `Confirm to delete ${wordClick}`;
+
+    }
+
+    function deleteWord(){
+        url = 'http://localhost:3000/removeWord/' + delSelection;
+				
+        fetch(url)
+        .then(resp => {
+            return resp;
+        })
+        .then(jsonResp => {
+            result = jsonResp;
+            if(result['status'] === 200){
+                jQuery('#removeModalClose').click();
+                displayAllWords();
+            }
+            else{
+                console.log(result['status'])
+            }	
+        });
+    }
+
+    function editDetailModal(id){
+        url = 'http://localhost:3000/fetchWord/' + id
+
+        fetch(url)
+        .then(resp => {
+            return resp.json();
+        })
+        .then(jsondata => {
+            result = jsondata;
+
+            const currentWord = result
+
+            document.getElementById("edit-modal-title").innerHTML = currentWord['word'];
+
+            let content = document.getElementById('edit-word-details-table');
+            //Clear display area
+            content.innerHTML = ''; 
+            let info = '';
+
+            info+= `<tr>`
+            info+= `<td class="col-xs-2"> <span>Origin: </span></td>`
+            info+= `<td class="col-xs-10"><textarea class="form-control originInput" row="3"id="originInput">${currentWord['origin']}</textarea></td>`
+            info+= `</tr>`        
+
+            var defiArr = currentWord['definition']
+            var defiNumArr = currentWord['defiTypeNum']
+            var defiTypeArr = currentWord['defiTypeName']
+
+            var temp = 0;
+
+            for (x in defiNumArr){
+                var defiCount = defiNumArr[x]
+                for (let i=0; i<defiCount; i++){
+                    if(temp === 0){
+                        info+= `<tr>`
+                        info+= `<td class="col-xs-2"> <span>Definition:<br/>${defiTypeArr[x]}</span></td>`
+                        info+= `<td class="col-xs-10"><textarea class="form-control wordDefi" row="2" >${defiArr[temp]}</textarea></td>`
+                        info+= `</tr>`
+                    }
+                    else if(i === 0 && temp !== 0){
+                        //console.log('second else')
+                        info+= `<tr>`
+                        info+= `<td class="col-xs-2"><span>${defiTypeArr[x]}</span></td>`
+                        info+= `<td class="col-xs-10"><textarea class="form-control wordDefi" row="2" >${defiArr[temp]}</textarea></td>`
+                        info+= `</tr>`
+                    }
+                    else{
+                        //console.log('third else')
+                        info+= `<tr>`
+                        info+= `<td class="col-xs-2"></td>`
+                        info+= `<td class="col-xs-10"><textarea class="form-control wordDefi" row="2" >${defiArr[temp]}</textarea></td>`
+                        info+= `</tr>`
+                    }//${temp}
+                    ++temp;
+                }
+/*
+                if(temp === defiArr.length){
+                    content.innerHTML = info;
+                }                    
+*/
+            
+            }
+
+            for (let i = 0 ; i < currentWord['synonym'].length; i++){
+                if(i == 0){
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"><span>Synonym: </span></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordSyno" row="1" >${currentWord['synonym'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+                else{
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordSyno" row="1" >${currentWord['synonym'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+            }
+
+            for (let i = 0 ; i < currentWord['antonym'].length; i++){
+                if(i==0){
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"><span>Antonym: </span></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordAnto" row="1" >${currentWord['antonym'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+                else{
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordAnto" row="1" >${currentWord['antonym'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+            }
+
+            for (let i = 0 ; i < currentWord['crossReference'].length; i++){
+                if(i==0){
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"><span>Cross Reference:</span></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordCR" row="1" >${currentWord['crossReference'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+                else{
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordCR" row="1" >${currentWord['crossReference'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+            }
+
+            for (let i = 0 ; i < currentWord['hypernym'].length; i++){
+                if(i==0){
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"><span>Hypernym</span></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordHypernym" row="1" >${currentWord['hypernym'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+                else{
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordHypernym" row="1" >${currentWord['hypernym'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+            }
+
+            for (let i = 0 ; i < currentWord['sameContext'].length; i++){
+                if (i==0){
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"><span>Same Context:</span></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordSameContext" row="1" >${currentWord['sameContext'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+                else{
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordSameContext" row="1" >${currentWord['sameContext'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+            }
+
+            for (let i = 0 ; i < currentWord['example'].length; i++){
+                if (i==0){
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"><span>Examples</span></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordExample" row="3" >${currentWord['example'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+                else{
+                    info+= `<tr>`
+                    info+= `<td class="col-xs-2"></td>`
+                    info+= `<td class="col-xs-10"><textarea class="form-control wordExample" row="3" >${currentWord['example'][i]}</textarea></td>`
+                    info+= `</tr>`
+                }
+            }
+
+            content.innerHTML = info;
+
+
+            let content2 = document.getElementById('editBtnDiv');
+
+            content2.innerHTML = '';
+            let info2 = '';
+
+            info2+= `<button type="button" name="submitted" onclick="editWord('${currentWord['_id']}')" class="btn btn-primary">Update</button>`
+
+            content2.innerHTML = info2;
+
+
+        });
+    }
+
+    function editWord(id){
+        console.log('editing')
+
+
+        //= document.getElementById("originInput").value;
+        var updateElements = {
+            updateOrigin: '', 
+            updateDefi: [],
+            updateSynonym: [],
+            updateAntonym: [],
+            updateCrossReference: [],
+            updateHypernym: [],
+            updateSameContext: [],
+            updateExample: []
+        }
+
+        //get number of tr, in order to loop through every text area in table and get input
+        //no use tiok
+        //var rows = document.getElementById('edit-word-details-table').getElementsByTagName("tr").length;
+
+/*
+        jQuery('#edit-word-details-table tr').each(function (cmp){
+            console.log(jQuery(this))
+            console.log(cmp)
+        })
+*/
+        //get table elements
+        var table = document.getElementById('edit-word-details-table')
+
+        //console.log(table)
+
+        //for each row, each cell in table
+        for (let row of table.rows){
+            for(let cell of row.cells){
+                var temp = cell.getElementsByTagName('textarea');
+                
+                //if td has no textarea element
+                if (typeof temp[0] === 'undefined'){
+                    continue;
+                }
+                else{
+                    var txtAreaClassName = temp[0].className.split(' ')//get all classname and split, store as array
+                    //console.log(txtAreaClassName[1])
+                    if(txtAreaClassName[1] === 'originInput'){
+                        updateElements.updateOrigin = temp[0].value;
+                    }
+                    else if(txtAreaClassName[1] === 'wordDefi'){
+                        updateElements.updateDefi.push(temp[0].value);
+                    }
+                    else if(txtAreaClassName[1] === 'wordSyno'){
+                        updateElements.updateSynonym.push(temp[0].value);
+                    }
+                    else if(txtAreaClassName[1] === 'wordAnto'){
+                        updateElements.updateAntonym.push(temp[0].value);
+                    }
+                    else if(txtAreaClassName[1] === 'wordCR'){
+                        updateElements.updateCrossReference.push(temp[0].value);
+                    }
+                    else if(txtAreaClassName[1] === 'wordHypernym'){
+                        updateElements.updateHypernym.push(temp[0].value);
+                    }
+                    else if(txtAreaClassName[1] === 'wordSameContext'){
+                        updateElements.updateSameContext.push(temp[0].value);
+                    }
+                    else if(txtAreaClassName[1] === 'wordExample'){
+                        updateElements.updateExample.push(temp[0].value);
+                    }
+
+                }
+            }
+        }
+/*
+        for (let i = 0; i<rows; i++){
+            var element = document.getElementById('edit-word-details-table').getElementsByTagName("tr")
+            var txtClassName = element[0].value;
+
+            console.log(txtClassName)
+
+            //console.log(i)
+        }
+*/
+
+
+        console.log(updateElements)
+
+        url = 'http://localhost:3000/updateWord/' + id;
+				
+        fetch(url,{
+            method: 'POST',
+            body: JSON.stringify(updateElements),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(resp => {
+            return resp;
+        })
+        .then(jsonResp => {
+            result = jsonResp;
+            if(result['status'] === 200){
+                jQuery('#editModalClose').click();
+                //displayAllWords();
+            }
+            else{
+                console.log(result['status'])
+            }	
+        });
+
+    }
+
+    (function () {
+        displayAllWords();
+    })();
+
+
+    </script>
+    </body>
+</html>
