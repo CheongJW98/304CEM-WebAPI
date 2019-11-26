@@ -116,9 +116,10 @@
                                     else if(resp.status === 200){
                                         
                                         return resp.json();
+                                        
                                     }
-                                
-                                })
+
+                                })//comment here
                                 .then(respJson => {
                                     //console.log(respJson)
                                     idLOGIN = respJson.id;
@@ -135,11 +136,7 @@
                                     })
                                     .then(resp => {
                                         console.log('login html',resp)
-
-                                       
-                                        
-                                        //if(resp.status === 200){
-                                            
+                      
                                             url = 'https://dict-api-304cem.herokuapp.com/client/'+idLOGIN;
                                             
                                             
@@ -147,7 +144,7 @@
                                             .then(resp => {
                                                 console.log(resp)
                                                 document.location.href = url
-                                                indow.location.href = url;
+                                                
                                             })
                                             .catch(err => console.error(`Client err: ${err}`))
                                         //}

@@ -15,6 +15,7 @@
     		<div id="header">
             
                 <div id="header-cover" class="row">
+                
 
                     <div id="header-wrapper">
                         <div id="header-container">
@@ -67,6 +68,7 @@
                 <button type="button" onClick = "ddpFunction()" id="user-show" class="dropbtn"></button>
                 <div id="myDropdown" class="dropdown-content">
                     <a id="user-show-email" href="#"></a>
+                    <a id ="showFavBtn1" onClick="showFavourites()">Favourites</a>
                     <a href="https://dict-api-304cem.herokuapp.com/logout">Logout</a>
                 </div>
             </div>
@@ -83,6 +85,17 @@
                 </div>
             </div>
 
+
+            <div id="favourites-container">
+                <div id="page-title-container">
+                    <p class="page-title">Favourites:</p>
+                </div>
+                                
+                <div id="fav-result-container" class="row">
+                    
+
+                </div>
+            </div>
             
 
             <div id="welcome-container">
@@ -98,6 +111,8 @@
                         <div class="modal-header">
                             <button type="button" id="showModalClose" class="close" data-dismiss="modal">&times;</button>
                             <h3 class="modal-title" id="show-modal-title"></h3><!--set title in function-->
+                            <button type= "button" class="btn btn-info" onClick = 'addFavourites()' id="favBtn">Add To Favourites</button>
+                            <button type= "button" class="btn btn-danger" onClick = 'removeFavourites()' id="favRemoveBtn">Remove From Favourites</button>
                         </div>
                         <div class="modal-body">
                             <div class= "content wrapper">
@@ -123,12 +138,25 @@
                     </div>
                 </div>
             </div>
-
     	</div>
-        
+
+
+        <div class="modal fade" id="favMessage" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal Content-->
+                <div class="modal-content">
+                    <!--Modal Header-->
+                    <div class="modal-header">
+                        <button type="button" id="showModalClose" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title" id="show-fav-message"></h3><!--set title in function-->
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
 
         
-
+    </div>
 
         <script>
 
@@ -265,6 +293,9 @@
 				if (input.length !=0){
                     
                     $('#result-container').show();
+                    $('#favBtn').show();
+                    $('#favRemoveBtn').hide();
+                    $('#favourites-container').hide();
                     $('#welcome-container').hide();
                     
                     document.getElementById('word-searched').innerHTML = input;
@@ -298,6 +329,7 @@
 
                             info+= `<div>`
                             info+= `<span class="clientWordDetailsTitle" >${currentWord['word']} </spa><br><br>`
+                            info+= `<button type= "button" class="btn btn-info" onClick="triggerAddFav()" id="favBtn2">Add To Favourites</button>`
                             info+= `</div>`  
 
                             info+= `<div class="clientOriginShow">`
@@ -453,6 +485,9 @@
                 }
 				else if (input.length ==0){
                     $('#result-container').hide();
+                    $('#favBtn').show()
+                    $('#favRemoveBtn').hide();
+                    $('#favourites-container').hide()
                     $('#welcome-container').show();
 
 				}
@@ -615,6 +650,158 @@
                 });
             }
 
+            //function to get favourites from database
+            function showFavourites(){
+
+                $('#result-container').hide();
+                $('#favBtn').hide();
+                $('#favRemoveBtn').show();
+                $('#favourites-container').show()
+                $('#welcome-container').hide();
+
+
+                var curURL = window.location.href;
+                var param = curURL.split("/");
+
+                url = 'https://dict-api-304cem.herokuapp.com/getFav/' + param[param.length-1]
+
+                fetch(url)
+                .then(resp => {
+                    return resp.json()
+                })
+                .then(respJson => {
+                    result = respJson;
+
+                    console.log(result)
+
+                    let content = document.getElementById('fav-result-container');
+                    content.innerHTML = ''; 
+                    let info = '';
+
+                    for (let i = 1; i <= result.length; i += 1) {
+                        const word = result[i-1];
+                        
+                        info+= `<div class="col-xs-2 client-card-result"><button class="client-card-btn" onClick = "getFavWordDetails('${word}')" data-toggle="modal" data-target="#showWord">`+ word +`</button></div>`;
+
+                    }
+
+                    content.innerHTML = info;
+                    
+                })
+            }
+
+            //function to fetch and show word details when one favourites are clicked
+            function getFavWordDetails(word){
+                url = `https://dict-api-304cem.herokuapp.com/searchWord/` + word;
+
+                fetch(url)
+                    .then(resp => {
+                        return resp.json();
+                    })
+                    .then(jsonResp => {
+                        result = jsonResp;
+                        var currentword = result[0]
+                        showWordDetails(currentword['_id'])
+                    });
+            }
+
+            //remove favourites function when delete button clicked
+            //id is taken from param, get favourites list of word
+            //index of word to be deleted is obtained and removed from the array
+            //the array of favourite words will then send back to functionAPI.js and update database
+            function removeFavourites(){
+                var curURL = window.location.href;
+                var param = curURL.split("/");
+
+                var removefav = {
+                    id: '',
+                    favourites: []
+                }
+
+                url = 'https://dict-api-304cem.herokuapp.com/getFav/' + param[param.length-1]
+
+                fetch(url)
+                .then(resp => {
+                    return resp.json()
+                })
+                .then(respJson => {
+                    result = respJson;
+
+                    var wordtoFav = document.getElementById('show-modal-title').innerHTML;
+
+                    var index = result.indexOf(wordtoFav);
+                    result.splice(index, 1);
+
+                    removefav.id = param[param.length-1];
+                    removefav.favourites = result;
+
+                    url = 'https://dict-api-304cem.herokuapp.com/removeFav'
+
+                    fetch(url,{
+                        method: 'POST',
+                        body: JSON.stringify(removefav),
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    .then(resp => {
+                        console.log(resp)
+                        if(resp.status === 200){
+                            showFavourites()
+                            $('#showWord').modal('hide')
+                        }
+                    })
+
+                    
+                });
+
+            }
+
+            //when only one result is shown after search, show button to add to favourites
+            function triggerAddFav(){
+                var curURL = window.location.href;
+                var param = curURL.split("/");
+
+                var wordtoFav = document.getElementById('word-searched').innerHTML;
+
+                console.log(wordtoFav)
+
+                url = 'https://dict-api-304cem.herokuapp.com/addFav/' + param[param.length-1]+'/'+wordtoFav
+
+                console.log(url)
+
+                fetch(url)
+                .then(resp => {
+                    console.log(resp)
+                    if(resp.status === 400){
+                        console.log('Fav added previously')
+                        document.getElementById('show-fav-message').innerHTML = 'Word exist in favourites'
+                        $('#favMessage').modal()
+                    }
+                })
+            }
+
+            //When there are multiple results after search, button in modal when clicked add word to favourites
+            function addFavourites(){
+                var curURL = window.location.href;
+                var param = curURL.split("/");
+
+                var wordtoFav = document.getElementById('show-modal-title').innerHTML;
+
+                url = 'https://dict-api-304cem.herokuapp.com/addFav/' + param[param.length-1]+'/'+wordtoFav
+
+                fetch(url)
+                .then(resp => {
+                    console.log(resp)
+                    if(resp.status === 400){
+                        console.log('Fav added previously')
+                        document.getElementById('show-fav-message').innerHTML = 'Word exist in favourites'
+                        $('#favMessage').modal()
+                    }
+                })
+            }
+
+
             //when user clicks on button, toggle between hiding and showing dropdown content
             function ddpFunction(){
                 document.getElementById("myDropdown").classList.toggle("show");
@@ -635,6 +822,8 @@
                 }
             }
 
+            //in drop down list at the right side of the user interface, 
+            //link to go to admin page after validation whether the user is admin or not
             function goAdmin(){
                 var curURL = window.location.href;
                 var param = curURL.split("/");
@@ -645,6 +834,7 @@
                 
             }
 
+            //display user information at the start when page loaded
             function displayUser(){
                 var curURL = window.location.href;
                 var param = curURL.split("/");
@@ -667,7 +857,7 @@
                     //console.log(parentDDP.childElementCount)
 
                     //only if user is admin and number of child in parent div ==2, add admin button. so that appending multiple similar admin button is prevented
-                    if(result['userType'] === 'admin' && parentDDP.childElementCount ===2){
+                    if(result['userType'] === 'admin' && parentDDP.childElementCount ===3){
 
                         var node = parentDDP.lastElementChild;//to set as 2nd option in drop down list
                         //console.log(node)

@@ -242,6 +242,7 @@
                     
                 }
                 else{
+                    //if no such word exists in database, add word to database
                     url = 'https://dict-api-304cem.herokuapp.com/addWord/' + input;
                     
                     fetch(url)
@@ -250,7 +251,7 @@
                     })
                     .then(jsonResp => {
                         result = jsonResp;
-                        //console.log(result['status'])
+                        //if adding is successful, close modal and refresh list of words
                         if(result['status'] === 200){
                             jQuery('#addModalClose').click();
                             document.getElementById('loadingAddScene').style.display = "none";
@@ -259,6 +260,7 @@
                             displayAllWords();
                         }
                         else{
+                            //if adding is not successful, message send 
                             msg.innerHTML = "Error occured. Please try again."
                             msgContainer.style.display="block"
                             document.getElementById('loadingAddScene').style.display = "none";
@@ -665,6 +667,7 @@
         }
     }
 
+    //in the dropdown list at the right, when link is clicked, back to client.html
     function goClient(){
         var curURL = window.location.href;
         var param = curURL.split("/");
@@ -675,6 +678,7 @@
         
     }
 
+    //fetch user details and display to user
     function displayUser(){
         var curURL = window.location.href;
         var param = curURL.split("/");

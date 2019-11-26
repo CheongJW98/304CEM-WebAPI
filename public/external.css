@@ -186,6 +186,10 @@ p {
 	display: none;
 }
 
+#favourites-container {
+	display: none;
+}
+
 #page-title-container {
 	display: flex;
 }
@@ -200,7 +204,12 @@ p {
 	font-size: 25px;
 }
 
-#search-result-container {
+#show-fav-message {
+	color: red;
+}
+
+#search-result-container,
+#fav-result-container {
 	display: inline-block;
 	/*margin: 30px 20px 30px 20px;*/
 	margin: 0;
@@ -384,8 +393,21 @@ p {
 }
 
 #goAdminLink,
-#goClientLink {
+#goClientLink,
+#showFavBtn1 {
 	cursor: pointer;
+}
+
+#favBtn,
+#favRemoveBtn {
+	position: absolute;
+	top: 16px;
+	right: 46px;
+}
+
+#favBtn2 {
+	float: right;
+	margin-top: -55px;
 }
 
 /*css for span only one result shown*/

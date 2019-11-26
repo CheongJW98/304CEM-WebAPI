@@ -142,48 +142,8 @@ async function retrieveFromAPI(wquery, gquery, res) {
 			//console.log('error from fetch', error);
 		});
 }
-/*
-async function validatePassword(email, password, res) {
-	models.User.find({ email })
-		.then((response1) => {
-			const private_key = response1[0]._id;
-			const payload = { username: response1[0].username, email: response1[0].email };
-			// Create a JSON Web Token (JWT)
 
-			if (bcrypt.compareSync(password, response1[0].password)) {
-				//res.status(200).json(response1);
-
-				var user = {
-					payload,
-					private_key
-				};
-
-				//const token = jwt.sign(payload, private_key, { expiresIn: '1d' });
-
-				//console.log('token', token);
-				//res.status(200).send({ auth: true, token: token });
-
-				const token = jwt.sign(user.payload, user.private_key, { expiresIn: '1d' });
-
-				res.json({
-					token
-				});
-
-				console.log('token', token);
-
-				res.status(200).send();
-
-				return user;
-			} else {
-				res.status(400).send();
-			}
-		})
-		.catch((error) => {
-			res.status(400).send(error);
-		});
-}
-*/
-
+//auto shows to login page when clicked
 app.get('/', function(req, res) {
 	//res.send('Welcome to WordDict');
 	res.sendFile(path.join(__dirname, 'public', 'login.html'));
@@ -194,6 +154,7 @@ app.get('/register', (req, res) => {
 	res.sendFile(path.join(__dirname, 'public', 'register.html'));
 });
 
+//register user wwith object passed from register.html
 app.post('/registerUser', (req, res) => {
 	console.log('register user');
 
@@ -218,6 +179,7 @@ app.post('/registerUser', (req, res) => {
 		});
 });
 
+//check if email had been registered
 app.get('/checkEmail/:email', (req, res) => {
 	models.User.find({ email: req.params.email })
 		.then((response) => {
@@ -229,12 +191,10 @@ app.get('/checkEmail/:email', (req, res) => {
 		});
 });
 
+//login user, compare hashed password and 
 app.post('/loginUser', async function(req, res) {
 	models.User.find({ email: req.body.email })
 		.then((response1) => {
-			//const private_key = response1[0]._id;
-			//const payload = { username: response1[0].username, email: response1[0].email };
-			// Create a JSON Web Token (JWT)
 
 			if (bcrypt.compareSync(req.body.password, response1[0].password)) {
 				var user = {
@@ -242,75 +202,133 @@ app.post('/loginUser', async function(req, res) {
 					email: response1[0].email,
 					id: '' + response1[0]._id
 				};
-				/*const token = jwt.sign(payload, private_key, { expiresIn: '1d' });
-				console.log(token);*/
+				
 				res.status(200).send(user);
 			} else {
 				res.status(400).send();
 			}
-
 		})
 		.catch((error) => {
 			res.status(400).send(error);
 		});
 });
 
+//sign token to be verified for authentication later
 app.post('/signIn', (req, res) => {
-	//console.log('reqbody', req.body);
 
 	const private_key = req.body.id;
 	const payload = { username: req.body.username, email: req.body.email };
 
 	const token = jwt.sign(payload, private_key, { expiresIn: '1d' });
 
-	//req.headers['authorization'] = token;
-
 	res.app.settings['credential'].token = token;
-
-	//req.flash('token', token);
 
 	res.json({
 		token: token
 	});
 
-	//res.redirect('/client/' + req.body.id);
-
-	//res.status(200).send(token);
 });
 
+//logout and set token to null
 app.get('/logout', (req, res) => {
 	res.app.settings['credential'].token = null;
-	res.sendFile("login.html", {root: path.join(__dirname, "/public/")})
+	res.sendFile('login.html', { root: path.join(__dirname, '/public/') });
 });
 
+//load login page
 app.get('/login', (req, res) => {
 	//console.log(path.join(__dirname, "public", "client.html"))
 	res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+//add favourites word for document with specified object id and
+app.get('/addFav/:id/:word', (req, res) => {
+	models.User.findOne({ _id: req.params.id })
+		.then((response) => {
+			console.log(req.params.word)
+			console.log('favourites', response['favourites']);
+			var favArr = response['favourites']
+
+			if(!favArr.includes(req.params.word)){
+				favArr.push(req.params.word)
+
+				models.User.updateOne(
+					{ _id: req.params.id },
+					{
+						favourites: favArr
+					}
+				)
+				.then((response) => {
+					res.send(`Updated Successfully`);
+					//res.res.status(200).json(response);
+				})
+				.catch((error) => {
+					res.status(400).send(error);
+				});
+			}
+			else{
+				res.status(400).send('Word existed in favourites')
+			}
+			
+
+			//res.status(200).json(response['favourites']);
+		})
+		.catch((error) => {
+			res.status(400).json(error);
+		});
+});
+
+//remvoe favourites by updating array in database
+app.post('/removeFav', (req, res) => {
+	console.log(req.body.id)
+	models.User.updateOne(
+		{ _id: req.body.id },
+		{
+			favourites: req.body.favourites
+		}
+	)
+	.then((response) => {
+		//res.send(`Updated Successfully`);
+		res.status(200).json('Favourites removed successfully');
+	})
+	.catch((error) => {
+		res.status(400).send(error);
+	});
+
+})
+
+//get all favourites word from database
+app.get('/getFav/:id', (req, res) => {
+	models.User.findOne({ _id: req.params.id })
+		.then((response) => {
+			console.log('favourites', response['favourites']);
+			
+			res.status(200).json(response['favourites']);
+		})
+		.catch((error) => {
+			res.status(400).json(error);
+		});
+});
+
+//show client.html if user is verified
 app.get('/client/:id', ensureToken, async (req, res) => {
-	//let token = req.flash('token');
-	//console.log('client token', req.token);
-	const id = req.params.id
+	
+	const id = req.params.id;
 
 	await jwt.verify(req.token, id, function(err, data) {
 		if (err) {
-			console.log('403 in client',err);
-			res.sendFile("login.html", {root: path.join(__dirname, "/public/")})
-			//console.error(err)
-			//res.sendStatus(403);
+			console.log('403 in client', err);
+			res.sendFile('login.html', { root: path.join(__dirname, '/public/') });
+			
 		} else {
-			//console.log('going to client', data);
-			//console.log(path.join(__dirname, 'public', 'client.html'))
-			//res.sendFile(path.join(__dirname, 'public', 'client.html'));
-			res.sendFile("client.html", {root: path.join(__dirname, "/public/")})
-			//res.status(200).send(data);
+			
+			res.sendFile('client.html', { root: path.join(__dirname, '/public/') });
 		}
 	});
 
-	//res.sendFile(path.join(__dirname, 'public', 'client.html'));
 });
 
+//fetch user details with object id
 app.get('/fetchUser/:id', (req, res) => {
 	models.User.findOne({ _id: req.params.id })
 		.then((response) => {
@@ -318,7 +336,7 @@ app.get('/fetchUser/:id', (req, res) => {
 				username: response['username'],
 				email: response['email'],
 				userType: response['userType']
-			}
+			};
 			res.status(200).json(loggedUser);
 		})
 		.catch((error) => {
@@ -327,49 +345,37 @@ app.get('/fetchUser/:id', (req, res) => {
 });
 
 
-/*
-app.get('/client', (req, res) => {
-	res.sendFile(path.join(__dirname, 'public', 'client.html'));
-});
-*/
-
 //display admin.html when /admin url
-
-app.get('/admin/:id',  ensureToken, async (req, res) => {
+//also validate if user is admin, if user is not admin, access prohibited
+app.get('/admin/:id', ensureToken, async (req, res) => {
 	models.User.findOne({ _id: req.params.id })
 		.then(async (response) => {
 			var loggedUser = {
 				username: response['username'],
 				email: response['email'],
-				userType: response['userType'],
-			}
+				userType: response['userType']
+			};
 
-			const id =''+response['_id']
+			const id = '' + response['_id'];
 
 			//console.log(id)
 			//console.log('token',req.token)
-			if(response['userType'] === 'admin'){
-
+			if (response['userType'] === 'admin') {
 				await jwt.verify(req.token, id, function(err, data) {
 					if (err) {
-						console.log('403 in admin',err);
-						res.sendFile("login.html", {root: path.join(__dirname, "/public/")})
-						
+						console.log('403 in admin', err);
+						res.sendFile('login.html', { root: path.join(__dirname, '/public/') });
 					} else {
-						res.sendFile("admin.html", {root: path.join(__dirname, "/public/")})
+						res.sendFile('admin.html', { root: path.join(__dirname, '/public/') });
 					}
 				});
-
+			} else {
+				res.status(400).send('You are not admin');
 			}
-			else{
-				res.status(400).send('You are not admin')
-			}
-
 		})
 		.catch((error) => {
 			res.status(400).json(error);
 		});
-
 });
 
 //fetch all words from database and display
@@ -383,6 +389,7 @@ app.get('/fetchAllWord', (req, res) => {
 		});
 });
 
+//search word from database 
 app.get('/searchWord/:word', (req, res) => {
 	var wordtosearch = req.params.word;
 
@@ -399,6 +406,7 @@ app.get('/searchWord/:word', (req, res) => {
 		});
 });
 
+//fetch specified word details from database
 app.get('/fetchWord/:id', (req, res) => {
 	//console.log(req.params.id)
 	models.Word.findOne({ _id: req.params.id })
@@ -457,23 +465,16 @@ app.post('/updateWord/:id', (req, res) => {
 		});
 });
 
+//send token to be verified when access
 function ensureToken(req, res, next) {
-	//const bearerHeader = req.headers['authorization'];
-	//console.log('in ensureToken', bearerHeader);
-	//console.log('in ensureToken 2', res.app.settings['credential'].token);
-	//const bearerHeader = res.app.settings['credential'].token
+	
 	const getToken = res.app.settings['credential'].token;
-	//console.log(`getToken: ${getToken}`)
-	/*if (typeof bearerHeader !== 'undefined') {
-		const bearer = bearerHeader.split(' ');
-		const bearerToken = bearer[1];
-		req.token = bearerToken;
-		next();*/
+	
 	if (typeof getToken !== 'undefined') {
 		req.token = getToken;
 		next();
 	} else {
-		console.log('Please login to consinue')
+		console.log('Please login to consinue');
 		//console.log('ensureToken', req.params.id);
 		next();
 	}
