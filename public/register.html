@@ -128,6 +128,8 @@
                                 document.getElementById("register-navigation").style.padding = "20px 10px";
                                 
                                 if (passwordInput === confirmPasswordInput){
+                                    document.getElementById("register-message").innerHTML = "";
+                                    document.getElementById("register-navigation").style.padding = "20px 10px";
 
                                     var saveUser = {
                                         username: usernameInput,
@@ -151,6 +153,10 @@
 
                                     document.getElementById('login-link').click()
 
+                                }
+                                else{
+                                    document.getElementById("register-message").innerHTML = "Please enter same password";
+                                    document.getElementById("register-navigation").style.padding = "0px 10px";
                                 }
                             }
                         })
