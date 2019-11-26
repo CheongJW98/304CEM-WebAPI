@@ -259,8 +259,8 @@ app.get('/addFav/:id/:word', (req, res) => {
 					}
 				)
 				.then((response) => {
-					res.send(`Updated Successfully`);
-					//res.res.status(200).json(response);
+					//res.send(`Updated Successfully`);
+					res.status(200);
 				})
 				.catch((error) => {
 					res.status(400).send(error);
