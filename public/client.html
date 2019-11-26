@@ -1,8 +1,8 @@
-<html>
-    <head>
-    	<link rel="icon" href="image/dict.png" type="image/png" sizes="16x16">
+<!DOCTYPE html>   
+ <head>
+    	<link rel="icon" href="/image/dict.png" type="image/png" sizes="16x16">
         <title>Dictionary</title>
-        <link rel="stylesheet" type="text/css" href="external.css">
+        <link rel="stylesheet" type="text/css" href="/external.css">
 
         <!--bootstrap-->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
@@ -15,14 +15,10 @@
     		<div id="header">
             
                 <div id="header-cover" class="row">
-                <!--
-                    <img src="image/bks.jpg" id="dict-header-cover" />
-                -->
-                    
 
                     <div id="header-wrapper">
                         <div id="header-container">
-                            <img src="image/dict.png" id="dict-header-icon"/>
+                            <img src="/image/dict.png" id="dict-header-icon"/>
 
                             <div class="custom-select">
                                 <select name="filter" id="filter-select">
@@ -43,7 +39,7 @@
                                     title="Type in a word">
 
                                 <button id="search-button" type="button" onclick="searchWord()">
-                                    <img src="image/search-icon-grey.png" id="search-icon" />
+                                    <img src="/image/search-icon-grey.png" id="search-icon" />
                                 </button>
                             
                             </div>
@@ -67,17 +63,27 @@
 
     		</div>
 
+            <div id ="user-btn-container">
+                <button type="button" onClick = "ddpFunction()" id="user-show" class="dropbtn"></button>
+                <div id="myDropdown" class="dropdown-content">
+                    <a id="user-show-email" href="#"></a>
+                    <a href="https://dict-api-304cem.herokuapp.com/logout">Logout</a>
+                </div>
+            </div>
+
             <div id="result-container">
                 <div id="page-title-container">
                     <p class="page-title">Search Results for:</p>
                     <p class="word-searched" id="word-searched">Example</p>
                 </div>
-                
+                                
                 <div id="search-result-container" class="row">
                     
 
                 </div>
             </div>
+
+            
 
             <div id="welcome-container">
                 <p id="welcome-text">Welcome to Dicts</p>
@@ -291,7 +297,7 @@
                         else if (result.length === 1){
 
                             info+= `<div>`
-                            info+= `<span class="clientWordDetailsTitle" >${currentWord['word']} </span><br><br>`
+                            info+= `<span class="clientWordDetailsTitle" >${currentWord['word']} </spa><br><br>`
                             info+= `</div>`  
 
                             info+= `<div class="clientOriginShow">`
@@ -609,7 +615,81 @@
                 });
             }
 
+            //when user clicks on button, toggle between hiding and showing dropdown content
+            function ddpFunction(){
+                document.getElementById("myDropdown").classList.toggle("show");
+            }
+
             
+            // Close the dropdown if the user clicks outside of it
+            window.onclick = function(event) {
+                if (!event.target.matches('.dropbtn')) {
+                    var dropdowns = document.getElementsByClassName("dropdown-content");
+                    var i;
+                    for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                    }
+                }
+            }
+
+            function goAdmin(){
+                var curURL = window.location.href;
+                var param = curURL.split("/");
+
+                url = 'https://dict-api-304cem.herokuapp.com/admin/' + param[param.length-1];
+                
+                document.location.href = url
+                
+            }
+
+            function displayUser(){
+                var curURL = window.location.href;
+                var param = curURL.split("/");
+
+                url = 'https://dict-api-304cem.herokuapp.com/fetchUser/' + param[param.length-1]
+
+                fetch(url)
+                .then(resp => {
+                    //console.log(resp)
+                    return resp.json()
+                })
+                .then(respJson => {
+                    //console.log(respJson)
+                    result = respJson;
+
+                    document.getElementById('user-show').innerHTML = `${result['username']}`;
+                    document.getElementById('user-show-email').innerHTML = `${result['email']}`
+
+                    var parentDDP = document.getElementById("myDropdown")
+                    //console.log(parentDDP.childElementCount)
+
+                    //only if user is admin and number of child in parent div ==2, add admin button. so that appending multiple similar admin button is prevented
+                    if(result['userType'] === 'admin' && parentDDP.childElementCount ===2){
+
+                        var node = parentDDP.lastElementChild;//to set as 2nd option in drop down list
+                        //console.log(node)
+                        var element = document.createElement('a');
+                        element.innerHTML = "Admin";
+                        element.id = "goAdminLink"
+
+                        node.parentNode.insertBefore(element, node)
+
+                        document.getElementById('goAdminLink').addEventListener('click', (e) => {
+                            goAdmin()
+
+                        }, {once: true})
+                        
+                    }
+                })
+            }
+
+            (function () {
+                displayUser();
+            })();
+
 
 
         </script>

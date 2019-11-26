@@ -24,6 +24,19 @@ var wordSchema = new mongoose.Schema({
 	example: [String]
 });
 
+var userSchema = new mongoose.Schema({
+	username: String,
+	email: String,
+	password: String,
+	favourites: [String],
+	userType: String
+});
+
 const Word = mongoose.model('WordsRecord', wordSchema);
 
-module.exports = Word;
+const User = mongoose.model('UserRecord', userSchema);
+
+module.exports = {
+	Word: Word,
+	User: User
+};

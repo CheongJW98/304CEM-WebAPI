@@ -1,0 +1,184 @@
+<html>
+    <head>
+    	<link rel="icon" href="/image/dict.png" type="image/png" sizes="16x16">
+        <title>Dictionary</title>
+        <link rel="stylesheet" type="text/css" href="/external.css">
+
+        <!--bootstrap-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    </head>
+    <body>
+    	<div id="login-wrapper">
+            <div id= "login-container">
+                <div id ="login-box">
+                    <div class="login-element">
+                        <div class="login-row">
+                            <img src="/image/dict.png" id="dict-login-icon"/>
+                        </div>
+                    </div>
+                    <div class="login-element">
+
+                        <div class="login-row">
+                            
+                            <span id="login-email">Email: </span>
+
+                            <input type="email" id="email-login" >
+                        </div>
+                    </div>
+                    <div class="login-element">
+                        <div class="login-row">
+                            <span id="login-password">Password: </span>
+
+                            <input type="password" id="password-login" >
+                        </div>
+                    </div> 
+                    <div class="login-element">
+                        <div class="login-row">
+                            <button type="button" onClick = "loginUser()" id="loginBtn" class="btn btn-primary">Login</button>
+                        </div>
+                    </div> 
+                    <div class="login-element">
+                        <div class="login-row register-link-div">
+                            <a id="register-link" href="https://dict-api-304cem.herokuapp.com/register">New User? Register Here.</a>
+                        </div>
+                    </div> 
+                    
+
+                </div>
+            </div>
+    	</div>
+        
+
+        
+
+
+        <script>
+
+            function loginUser(){
+                var emailInput = document.getElementById('email-login').value
+                var passwordInput = document.getElementById('password-login').value
+
+                if(emailInput === "" || passwordInput===""){
+
+                    if(emailInput === ""){
+                        document.getElementById('email-login').placeholder = "Please enter email"
+                    }
+
+                    if(passwordInput === ""){
+                        document.getElementById('password-login').placeholder = "Please enter password"
+
+                    }
+                    
+                }
+                else if(!validateEmail(emailInput)){
+                    document.getElementById('email-login').value = ""
+                    document.getElementById('email-login').placeholder = "Email in wrong format."
+                }
+                else{
+                    url = 'https://dict-api-304cem.herokuapp.com/checkEmail/'+emailInput
+
+                    fetch(url)
+                        .then(resp => {
+
+                            return resp.json();
+                        })
+                        .then(jsonResp => {
+
+                            result= jsonResp
+
+                            if(result.length !== 0){
+
+                                url = 'https://dict-api-304cem.herokuapp.com/loginUser'
+
+                                var loginInfo = {
+                                    email: emailInput,
+                                    password: passwordInput
+                                }
+                                
+
+                                fetch(url,{
+                                    method: 'POST',
+                                    body: JSON.stringify(loginInfo),
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    }
+                                })
+                                .then(resp => {
+                                    //console.log(resp)
+
+                                    if(resp.status === 400){
+                                        document.getElementById('password-login').value = ""
+                                        document.getElementById('password-login').placeholder = "Password entered is wrong."
+                                    }
+                                    else if(resp.status === 200){
+                                        
+                                        return resp.json();
+                                    }
+                                
+                                })
+                                .then(respJson => {
+                                    //console.log(respJson)
+                                    idLOGIN = respJson.id;
+
+                                    url = 'https://dict-api-304cem.herokuapp.com/signIn'
+
+                                    fetch(url,{
+                                        method: 'POST',
+                                        body: JSON.stringify(respJson),
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            "authorization": ""
+                                        }
+                                    })
+                                    .then(resp => {
+                                        console.log('login html',resp)
+
+                                       
+                                        
+                                        //if(resp.status === 200){
+                                            
+                                            url = 'https://dict-api-304cem.herokuapp.com/client/'+idLOGIN;
+                                            
+                                            
+                                            fetch(url)
+                                            .then(resp => {
+                                                console.log(resp)
+                                                document.location.href = url
+                                                indow.location.href = url;
+                                            })
+                                            .catch(err => console.error(`Client err: ${err}`))
+                                        //}
+                                        
+                                    });
+                                })//comment here
+                            }
+                            else{
+                                document.getElementById('email-login').value = ""
+                                document.getElementById('email-login').placeholder = "Email entered not found."
+                            }
+                        });
+                    
+
+                    
+                }
+
+            }
+
+            
+            //validates if it matches a regex so that the input for email has the correct format 
+            function validateEmail(email) {
+                if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
+                {
+                    return (true)
+                }
+                    return (false)
+            }
+
+
+        </script>
+
+    </body>
+</html>

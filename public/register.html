@@ -1,0 +1,182 @@
+<html>
+    <head>
+    	<link rel="icon" href="image/dict.png" type="image/png" sizes="16x16">
+        <title>Dictionary</title>
+        <link rel="stylesheet" type="text/css" href="external.css">
+
+        <!--bootstrap-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    </head>
+    <body>
+    	<div id="register-wrapper">
+            <div id= "register-container">
+                <div id ="register-box">
+                
+                    <div class="register-element">
+                            <h3 id="register-title">Register</h3>
+
+                    </div>
+                    <form>
+                    <div class="register-element">
+                            <div class="col-xs-3">
+                                <span id="register-username">Username: </span>
+                            </div>
+                            <div class="col-xs-9">
+                                <input type="text" id="username-register" required>
+                            </div>
+                    </div>
+                    <div class="register-element">
+                            <div class="col-xs-3">
+                                <span id="register-email">Email: </span>
+                            </div>
+                            <div class="col-xs-9">
+                                    <input type="email" id="email-register" required>
+                            </div>
+                    </div>
+                    <div class="register-element">
+
+                            <div class="col-xs-3">
+                                <span id="register-password">Password: </span>
+                            </div>
+                            <div class="col-xs-9">
+                                <input type="password" id="password-register" required>
+                            </div>
+                    </div> 
+                    <div class="register-element">
+
+                            <div class="col-xs-3">
+                                <span id="register-password">Confirm Password: </span>
+                            </div>
+                            <div class="col-xs-9">
+                                <input type="password" id="password-register-confirm" required>
+                            </div>
+
+                    </div> 
+                    <div class="register-element register-message-container">
+
+                        <span id="register-message"></span>
+
+
+                    </div> 
+
+                    <div class="register-element " id ="register-navigation">
+
+                        <div class="col-xs-9">
+                            <a id="login-link" href="https://dict-api-304cem.herokuapp.com/login" >Back to Login</a>
+                        </div>
+                        <div class="col-xs-3">
+                            <button type="button" onClick = "registerUser()" class="btn btn-primary">Submit</button>
+                        </div>
+
+
+                    </div> 
+                    </form>
+                </div>
+            </div>
+    	</div>
+        
+        <script>
+
+            //get input from input box
+            //validate if there is any empty inputs
+            //validate if email has correct format
+            //validate if email has been registered
+            //if pass all validation, register user and add to database
+            function registerUser(){
+
+                var usernameInput = document.getElementById("username-register").value
+                var emailInput = document.getElementById("email-register").value
+                var passwordInput = document.getElementById("password-register").value
+                var confirmPasswordInput = document.getElementById("password-register-confirm").value
+
+                var message = document.getElementById("register-message")
+
+                if(usernameInput === '' || emailInput === ''|| passwordInput === ''|| confirmPasswordInput === ''){
+                    message.innerHTML = "Please enter your personal details to register.";
+                    document.getElementById("register-navigation").style.padding = "0px 10px";
+
+                }
+                else if(!validateEmail(emailInput)){
+                    message.innerHTML = "Please enter your email in correct format.";
+                    document.getElementById("register-navigation").style.padding = "0px 10px";
+                }
+                else{//check if similar email exists in database
+                    message.innerHTML = "";
+                    document.getElementById("register-navigation").style.padding = "20px 10px";
+
+                    url = 'https://dict-api-304cem.herokuapp.com/checkEmail/'+emailInput
+
+                    fetch(url)
+                        .then(resp => {
+
+                            return resp.json();
+                        })
+                        .then(jsonResp => {
+
+                            result= jsonResp
+
+                            if(result.length !== 0){
+
+                                document.getElementById("register-message").innerHTML = "Email registered. Please try other email.";
+                                document.getElementById("register-navigation").style.padding = "0px 10px";
+                            }
+                            else{
+                                document.getElementById("register-message").innerHTML = "";
+                                document.getElementById("register-navigation").style.padding = "20px 10px";
+                                
+                                if (passwordInput === confirmPasswordInput){
+
+                                    var saveUser = {
+                                        username: usernameInput,
+                                        email: emailInput,
+                                        password: passwordInput,
+                                        favourites: [],
+                                        userType: 'user'
+                                    }
+                                    console.log('adding')
+
+                                    url = 'https://dict-api-304cem.herokuapp.com/registerUser';
+                            
+                                    fetch(url,{
+                                        method: 'POST',
+                                        body: JSON.stringify(saveUser),
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        }
+                                    })
+
+                                    document.getElementById('login-link').click()
+
+                                }
+                            }
+                        })
+                        
+                    
+                        
+                }
+
+            }
+
+
+            //validates if it matches a regex so that the input for email has the correct format 
+            function validateEmail(email) {
+                if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
+                {
+                    return (true)
+                }
+                    return (false)
+            }
+
+
+                
+
+            
+
+
+        </script>
+
+    </body>
+</html>

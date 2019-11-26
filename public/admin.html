@@ -1,8 +1,8 @@
 <html>
     <head>
-        <link rel="icon" href="image/dict.png" type="image/png" sizes="16x16">
+        <link rel="icon" href="/image/dict.png" type="image/png" sizes="16x16">
         <title>Dictionary</title>
-        <link rel="stylesheet" type="text/css" href="external.css">
+        <link rel="stylesheet" type="text/css" href="/external.css">
         <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 
         <!--bootstrap-->
@@ -23,7 +23,7 @@
 
                 <div id="header-wrapper">
                     <div id="header-container">
-                        <img src="image/dict.png" id="dict-header-icon"/>
+                        <img src="/image/dict.png" id="dict-header-icon"/>
                         
                         <div class="header-input-container" id = "admin-input-header">
 
@@ -38,6 +38,16 @@
             </div>
 
         </div>
+        <!--to show dropdown list-->
+        <div id ="user-btn-container">
+            <button type="button" onClick = "ddpFunction()" id="user-show" class="dropbtn"></button>
+            <div id="myDropdown" class="dropdown-content">
+                <a id="user-show-email" href="#"></a>
+                <a href="https://dict-api-304cem.herokuapp.com/logout">Logout</a>
+            </div>
+        </div>  
+
+
         <div id="admin-add-wrapper">
             <div id="admin-add-container" class="row">
                 <!--<button class="btn add-btn" id="adminAdd">-->
@@ -251,6 +261,8 @@
                         else{
                             msg.innerHTML = "Error occured. Please try again."
                             msgContainer.style.display="block"
+                            document.getElementById('loadingAddScene').style.display = "none";
+                            document.getElementById('addWordSubmitBtnContainer').style.display = "block";
                             //alert("Please try again.");
                         }		
                         document.getElementById('wordtoaddinput').value = ""; //Clear input field
@@ -360,6 +372,7 @@
         })
         .then(jsonResp => {
             result = jsonResp;
+            console.log(result)
             if(result['status'] === 200){
                 jQuery('#removeModalClose').click();
                 displayAllWords();
@@ -632,9 +645,79 @@
 
     }
 
+    //when user clicks on button, toggle between hiding and showing dropdown content
+    function ddpFunction(){
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+        if (!event.target.matches('.dropbtn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+            }
+        }
+    }
+
+    function goClient(){
+        var curURL = window.location.href;
+        var param = curURL.split("/");
+
+        url = 'https://dict-api-304cem.herokuapp.com/client/' + param[param.length-1];
+        
+        document.location.href = url
+        
+    }
+
+    function displayUser(){
+        var curURL = window.location.href;
+        var param = curURL.split("/");
+
+        url = 'https://dict-api-304cem.herokuapp.com/fetchUser/' + param[param.length-1]
+
+        fetch(url)
+        .then(resp => {
+            return resp.json()
+        })
+        .then(respJson => {
+            result = respJson;
+
+            document.getElementById('user-show').innerHTML = `${result['username']}`;
+            document.getElementById('user-show-email').innerHTML = `${result['email']}`
+
+            var parentDDP = document.getElementById("myDropdown")
+
+            //only if user is admin and number of child in parent div ==2, add admin button. so that appending multiple similar admin button is prevented
+            if(parentDDP.childElementCount ===2){
+
+                var node = parentDDP.lastElementChild;//to set as 2nd option in drop down list
+                var element = document.createElement('a');
+                element.innerHTML = "Dict";
+                element.id = "goClientLink"
+
+                node.parentNode.insertBefore(element, node)
+
+                document.getElementById('goClientLink').addEventListener('click', (e) => {
+                    goClient()
+
+                }, {once: true})
+                
+            }
+        })
+    }
+
+
+
     //function to show all words added at start of application
     (function () {
         displayAllWords();
+        displayUser();
     })();
 
 

@@ -37,7 +37,7 @@ p {
 }
 
 #search-button {
-	margin-top: 18px;
+	margin-top: 14px;
 	margin-left: -36px;
 	position: relative;
 	cursor: pointer;
@@ -379,8 +379,14 @@ p {
 
 }
 
+#user-btn-container {
+	float: right;
+}
 
-
+#goAdminLink,
+#goClientLink {
+	cursor: pointer;
+}
 
 /*css for span only one result shown*/
 .clientWordDetailsTitle {
@@ -399,6 +405,110 @@ p {
 
 
 
+#login-wrapper,
+#register-wrapper {
+	height: 100%;
+	display: table;
+	margin: auto;
+}
+
+#login-container,
+#register-container {
+	margin: auto;
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.login-element {
+	padding: 10px;
+}
+
+.login-element input,
+.register-element input {
+	width: 300px;
+}
+
+#login-box,
+#register-box {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+.login-row img {
+	display: block;
+	margin: auto;
+}
+
+#login-email {
+	padding-right: 30px;
+}
+
+#login-password,
+#register-password {
+	padding-right: 3px;
+}
+
+#loginBtn {
+	width: 100%;
+}
+
+input#email-login::placeholder,
+input#password-login::placeholder {
+	/* Chrome, Firefox, Opera, Safari 10.1+ */
+	color: red;
+	opacity: 0.5;
+	/* Firefox */
+}
+
+input#email-login:-ms-input-placeholder,
+input#password-login:-ms-input-placeholder {
+	/* Internet Explorer 10-11 */
+	color: red;
+	opacity: 0.5;
+
+}
+
+input#email-login:-ms-input-placeholder,
+input#password-login :-ms-input-placeholder {
+	/* Microsoft Edge */
+	color: red;
+	opacity: 0.5;
+
+}
+
+.register-link-div {
+	text-align: center;
+}
+
+.register-link-div a {
+	cursor: pointer;
+}
+
+#register-box {
+	height: 360px;
+}
+
+#register-title {
+	margin: 0;
+	padding: 0 20px;
+}
+
+.register-element {
+	padding: 20px 10px;
+}
+
+.register-message-container {
+	margin-top: 15px;
+	text-align: center;
+}
+
+#register-message {
+	color: red;
+}
+
+#login-link {
+	cursor: pointer;
+}
 
 
 
@@ -601,4 +711,44 @@ p {
 		transform: perspective(140px) rotateY(180deg);
 		opacity: 0;
 	}
+}
+
+/*dropdown list in client*/
+.dropbtn {
+	background-color: #b2a27e;
+	color: white;
+	padding: 10px 20px;
+	font-size: 16px;
+	border: none;
+	cursor: pointer;
+	border-top: 1px solid;
+}
+
+.dropbtn:hover,
+.dropbtn:focus {
+	background-color: #4c6e70;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: #f1f1f1;
+	min-width: 160px;
+	overflow: auto;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+	right: 0;
+	z-index: 1;
+	text-align: center;
+}
+
+.dropdown-content a {
+	color: black;
+	padding: 12px 16px;
+	text-decoration: none;
+	display: block;
+}
+
+.dropdown-content a:hover {
+	background-color: #dcdcdc;
+	text-decoration: none;
 }
