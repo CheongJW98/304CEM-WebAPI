@@ -260,7 +260,7 @@ app.get('/addFav/:id/:word', (req, res) => {
 				)
 				.then((response) => {
 					//res.send(`Updated Successfully`);
-					res.status(200);
+					res.status(200).send();
 				})
 				.catch((error) => {
 					res.status(400).send(error);
